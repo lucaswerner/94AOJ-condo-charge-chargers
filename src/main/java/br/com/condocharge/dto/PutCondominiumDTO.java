@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostCondominiumDTO {
-    private String cnpj;
+public class PutCondominiumDTO {
     private String name;
     private String address;
 }
