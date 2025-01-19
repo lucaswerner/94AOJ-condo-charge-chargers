@@ -11,11 +11,13 @@ public final class ChargeMapper {
     public static ChargeDTO fromEntity(Charge entity) {
         final ChargeDTO chargeDTO = new ChargeDTO();
 
-        chargeDTO.setId(entity.getChargeId());
+        chargeDTO.setChargeId(entity.getChargeId());
         chargeDTO.setUserId(entity.getUserId());
         chargeDTO.setStatus(entity.getStatus());
-        chargeDTO.setBeginning(entity.getChargeStart());
-        chargeDTO.setEnd(entity.getChargeEnd());
+        chargeDTO.setChargeStart(entity.getChargeStart());
+        chargeDTO.setChargeEndPreview(entity.getChargeEndPreview());
+        chargeDTO.setChargeEnd(entity.getChargeEnd());
+        chargeDTO.setEnergyConsumption(entity.getEnergyConsumption());
 
         chargeDTO.setStation(StationMapper.fromEntity(entity.getStation()));
 

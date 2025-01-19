@@ -28,6 +28,7 @@ public final class StationMapper {
         stationDTO.setStatus(entity.getStatus());
         stationDTO.setCreationDt(entity.getCreationDt());
         stationDTO.setLastUpdate(entity.getLastUpdate());
+        stationDTO.setCondominiumCnpj(entity.getCondominiumCnpj());
 
         return stationDTO;
     }

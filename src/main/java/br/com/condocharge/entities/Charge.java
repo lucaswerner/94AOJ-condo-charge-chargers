@@ -34,7 +34,13 @@ public class Charge {
     private LocalDateTime chargeStart;
 
     @Column(nullable = true)
+    private LocalDateTime chargeEndPreview;
+
+    @Column(nullable = true)
     private LocalDateTime chargeEnd;
+
+    @Column(nullable = true)
+    private Integer energyConsumption;
 
     @Column(nullable = false, insertable=false, updatable=false)
     private String stationId;

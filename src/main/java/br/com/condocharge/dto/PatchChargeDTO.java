@@ -8,13 +8,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChargeDTO {
-    private Long chargeId;
-    private Long userId;
-    private ChargeStatus status;
-    private LocalDateTime chargeStart;
+public class PatchChargeDTO {
     private LocalDateTime chargeEndPreview;
     private LocalDateTime chargeEnd;
     private Integer energyConsumption;
-    private StationDTO station;
+    private ChargeStatus status;
 }

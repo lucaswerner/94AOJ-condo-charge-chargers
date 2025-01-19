@@ -7,6 +7,7 @@ import java.util.Optional;
 import br.com.condocharge.dto.PatchStationDTO;
 import br.com.condocharge.dto.PostStationDTO;
 import br.com.condocharge.dto.StationDTO;
+import br.com.condocharge.entities.Condominium;
 import br.com.condocharge.entities.Station;
 import br.com.condocharge.mapper.StationMapper;
 import br.com.condocharge.repository.StationRepository;
@@ -72,6 +73,43 @@ public class StationService {
         stationRepository.persist(stationFromDB);
 
         return Optional.of(stationFromDB);
+    }
+
+    public List<StationDTO> findAllByCondominiumCnpj(String condominiumCnpj) {
+        return stationRepository.list("condominiumCnpj", condominiumCnpj)
+                .stream()
+                .map(StationMapper::fromEntity)
+                .toList();
+    }
+
+    @Transactional
+    public StationDTO saveNewStation(Condominium condominium, PostStationDTO postStationDTO) {
+        final Station newStation = StationMapper.fromDTO(postStationDTO);
+        newStation.setCondominum(condominium);
+        stationRepository.persist(newStation);
+
+        return StationMapper.fromEntity(newStation);
+    }
+
+    @Transactional
+    public Optional<StationDTO> updateStation(StationDTO stationDTO, PatchStationDTO patchStationDTO) {
+        final Optional<Station> optStation = stationRepository.findByIdOptional(stationDTO.getId());
+        if (optStation.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final Station station = optStation.get();
+
+        if (!station.getCondominiumCnpj().equals(stationDTO.getCondominiumCnpj())) {
+            return Optional.empty();
+        }
+
+        station.setNumber(patchStationDTO.getNumber());
+        station.setStatus(patchStationDTO.getStatus());
+
+        stationRepository.persist(station);
+
+        return Optional.of(StationMapper.fromEntity(station));
     }
 
 }

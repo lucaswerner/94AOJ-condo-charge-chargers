@@ -46,7 +46,7 @@ public class ChargeResource {
         return Response
                 .created(uriInfo
                         .getAbsolutePathBuilder()
-                        .path(registeredCharge.getId().toString())
+                        .path(registeredCharge.getChargeId().toString())
                         .build())
                 .entity(registeredCharge)
                 .build();

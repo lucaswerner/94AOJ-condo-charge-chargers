@@ -2,13 +2,21 @@ package br.com.condocharge.resources;
 
 import java.util.List;
 
+import br.com.condocharge.dto.ChargeDTO;
 import br.com.condocharge.dto.CondominiumDTO;
+import br.com.condocharge.dto.PatchChargeDTO;
+import br.com.condocharge.dto.PatchStationDTO;
+import br.com.condocharge.dto.PostChargeDTO;
 import br.com.condocharge.dto.PostCondominiumDTO;
+import br.com.condocharge.dto.PostStationDTO;
 import br.com.condocharge.dto.PutCondominiumDTO;
+import br.com.condocharge.dto.StationDTO;
+import br.com.condocharge.service.ChargeService;
 import br.com.condocharge.service.CondominiumService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -19,13 +27,16 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
-@Path("/condominium")
+@Path("/condominiums")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CondominiumResource {
 
     @Inject
     CondominiumService condominiumService;
+
+    @Inject
+    ChargeService chargeService;
 
     @GET
     public List<CondominiumDTO> getAllCondominiums() {
@@ -59,88 +70,89 @@ public class CondominiumResource {
             @PathParam("cnpj") String cnpj,
             PutCondominiumDTO putCondominiumDTO) {
         return condominiumService.updateData(cnpj, putCondominiumDTO)
+                .map(updatedCondominium -> Response.ok(updatedCondominium).build())
+                .orElse(Response.status(404).build());
+    }
+
+    @GET
+    @Path("{cnpj}/stations")
+    public List<StationDTO> getAllStations(@PathParam("cnpj") String cnpj) {
+        return condominiumService.findAllStationsByCondominiumCnpj(cnpj);
+    }
+
+    @POST
+    @Path("{cnpj}/stations")
+    public Response registerNewStation(
+            @PathParam("cnpj") String cnpj,
+            PostStationDTO postStationDTO,
+            @Context UriInfo uriInfo) {
+        final StationDTO savedStation = condominiumService.registerNewStation(cnpj, postStationDTO);
+        return Response.created(uriInfo
+                .getAbsolutePathBuilder()
+                .path(savedStation.getId())
+                .build())
+                .entity(savedStation)
+                .build();
+    }
+
+    @GET
+    @Path("{cnpj}/stations/{stationId}")
+    public Response getStationById(
+            @PathParam("cnpj") String cnpj,
+            @PathParam("stationId") String stationId) {
+        return condominiumService.getStationById(cnpj, stationId)
+                .map(station -> Response.ok(station).build())
+                .orElse(Response.status(404).build());
+    }
+
+    @PATCH
+    @Path("{cnpj}/stations/{stationId}")
+    public Response updateStation(
+            @PathParam("cnpj") String cnpj,
+            @PathParam("stationId") String stationId,
+            PatchStationDTO patchStationDTO) {
+        return condominiumService.updateStation(cnpj, stationId, patchStationDTO)
                 .map(updatedStation -> Response.ok(updatedStation).build())
                 .orElse(Response.status(404).build());
     }
 
-    // @GET
-    // @Path("{cnpj}/station")
-    // public List<StationDTO> getAllStations(@PathParam("cnpj") String cnpj) {
-    // return null;
-    // }
+    @GET
+    @Path("{cnpj}/stations/{stationId}/charges")
+    public List<ChargeDTO> getAllStationCharges(
+            @PathParam("cnpj") String cnpj,
+            @PathParam("stationId") String stationId) {
+        return condominiumService.findAllCharges(cnpj, stationId);
+    }
 
-    // @POST
-    // @Path("{cnpj}/station")
-    // public List<StationDTO> registerNewStation(@PathParam("cnpj") String cnpj) {
-    // return null;
-    // }
+    @POST
+    @Path("{cnpj}/stations/{stationId}/charges")
+    public Response registerNewCharge(
+            @PathParam("cnpj") String cnpj,
+            @PathParam("stationId") String stationId,
+            PostChargeDTO postChargeDTO,
+            @Context UriInfo uriInfo) {
+        return chargeService.postNewCharge(cnpj, stationId, postChargeDTO)
+                .map(newCharge -> {
+                    return Response.created(uriInfo
+                            .getAbsolutePathBuilder()
+                            .path(newCharge.getChargeId().toString())
+                            .build())
+                            .entity(newCharge)
+                            .build();
+                })
+                .orElse(Response.status(404).build());
+    }
 
-    // @GET
-    // @Path("{cnpj}/station/{stationId}")
-    // public List<StationDTO> getStationById(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId) {
-    // return null;
-    // }
-
-    // @PATCH
-    // @Path("{cnpj}/station/{stationId}")
-    // public List<StationDTO> updateStation(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId,
-    // PatchStationDTO patchStationDTO) {
-    // return null;
-    // }
-
-    // @GET
-    // @Path("{cnpj}/station/{stationId}/charge")
-    // public List<ChargeDTO> getAllStationCharges(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId) {
-    // return null;
-    // }
-
-    // @POST
-    // @Path("{cnpj}/station/{stationId}/charge")
-    // public ChargeDTO registerNewCharge(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId) {
-    // return null;
-    // }
-
-    // @GET
-    // @Path("{cnpj}/station/{stationId}/charge/{chargeId}")
-    // public ChargeDTO getStationChargeById(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId) {
-    // return null;
-    // }
-
-    // @PATCH
-    // @Path("{cnpj}/station/{stationId}/charge/{chargeId}")
-    // public ChargeDTO patchChargeInfo(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId,
-    // @PathParam("chargeId") Long chargeId) {
-    // return null;
-    // }
-
-    // @GET
-    // @Path("{cnpj}/station/{stationId}/charge/{chargeId}/status")
-    // public ChargeDTO getChargeStatus(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId,
-    // @PathParam("chargeId") Long chargeId) {
-    // return null;
-    // }
-
-    // @POST
-    // @Path("{cnpj}/station/{stationId}/charge/{chargeId}/status")
-    // public ChargeDTO registerChargeStatus(
-    // @PathParam("cnpj") String cnpj,
-    // @PathParam("stationId") String stationId,
-    // @PathParam("chargeId") Long chargeId) {
-    // return null;
-    // }
+    @PATCH
+    @Path("{cnpj}/stations/{stationId}/charges/{chargeId}")
+    public Response patchChargeInfo(
+            @PathParam("cnpj") String cnpj,
+            @PathParam("stationId") String stationId,
+            @PathParam("chargeId") Long chargeId,
+            PatchChargeDTO patchCharge) {
+        return chargeService.updateCharging(cnpj, stationId, chargeId, patchCharge)
+                .map(charge -> Response.ok(charge).build())
+                .orElse(Response.status(404).build());
+    }
 
 }

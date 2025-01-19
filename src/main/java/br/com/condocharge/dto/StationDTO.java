@@ -15,4 +15,5 @@ public class StationDTO {
     private StationStatus status;
     private LocalDateTime creationDt;
     private LocalDateTime lastUpdate;
+    private String condominiumCnpj;
 }

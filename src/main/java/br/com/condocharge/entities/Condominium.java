@@ -1,8 +1,12 @@
 package br.com.condocharge.entities;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,5 +24,8 @@ public class Condominium {
 
     @Column(nullable = false, length = 50)
     private String address;
+
+    @OneToMany(mappedBy = "condominum", fetch = FetchType.LAZY)
+    private Set<Station> stations;
 
 }

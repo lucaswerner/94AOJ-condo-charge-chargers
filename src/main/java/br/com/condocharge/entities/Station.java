@@ -11,6 +11,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +40,13 @@ public class Station extends PanacheEntityBase {
 
     @Column(nullable = false)
     private LocalDateTime lastUpdate = LocalDateTime.now();
+
+    @Column(nullable = false, insertable=false, updatable=false)
+    private String condominiumCnpj;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "condominiumCnpj", nullable = false)
+    private Condominium condominum;
 
     @OneToMany(mappedBy = "station", fetch = FetchType.LAZY)
     private Set<Charge> charges;
